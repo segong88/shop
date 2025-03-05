@@ -28,6 +28,7 @@ public class SecurityConfig {
 
                                 //권한이 admin인 사람은 해당페이지에 접속가능
                                 .requestMatchers("/admin/item/**").hasRole("ADMIN")
+                                .requestMatchers("/orders/**").authenticated()      //로그인이 되어있어야만 하는 주소
 
                                 .anyRequest().permitAll()
                 )

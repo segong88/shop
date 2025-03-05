@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>주문목록</title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+
+        <h2 class="mt-5">구매이력</h2>
+
+        <th:block th:each="dto : ${responesPageDTO.dtoList}">
+
+            <div class="row mt-2 mb-2">
+
+                <div class="col">
+
+                    <h4> [[${dto.orderDate + ' 주문'}]]
+
+                    <th:block th:if="${dto.orderStatus.name() == 'ORDER'}">
+                            <button>주문취소</button>
+                    </th:block>
+                    <th:block th:if="${dto.orderStatus.name() == 'CANCEL'}">
+                            <span>(취소완료)</span>
+                    </th:block>
+                    </h4>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+
+                        <div class="row align-items-center">
+                            <th:block th:each="orderItemDTO : ${dto.orderItemDTOList}">
+
+                                <div class="col">
+                                    <img th:src="${'/images/' + orderItemDTO.imgUrl}">
+                                </div>
+
+                                <div class="col">
+                                    <div class="card-body">
+
+                                        <h5 class="card-title" th:text="${orderItemDTO.itemNm}"></h5>
+
+                                        <span class="card-text" th:text="${orderItemDTO.orderPrice + '원'}"></span>
+
+                                        <span class="card-text" th:text="${orderItemDTO.count + '개'}"></span>
+
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </th:block>
+
+    </th:block>
+
+</body>
+</html>

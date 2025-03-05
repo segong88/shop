@@ -2,11 +2,16 @@ package com.example.shop.dto;
 
 import com.example.shop.constant.OrderStatus;
 import com.example.shop.entity.Orders;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter @Setter @ToString @NoArgsConstructor
 public class OrderHistDTO {
 
     private Long orderId;   //주문 아이디

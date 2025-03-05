@@ -143,7 +143,7 @@ public class ItemController {
             log.info("상품정보" + itemDTO);
 
             if(!itemDTO.getCreateBy().equals(principal.getName())) {
-                log.info("리ㅏ스트로 이동");
+                log.info("리스트로 이동");
                 return "redirect:/admin/item/list";
             }
 

@@ -96,16 +96,15 @@ public class OrderService {
                     //대표이미지라면 orderItemDTO로 변환
                     if(imgEntity.getRepimgYn() != null && imgEntity.getRepimgYn().equals("Y")){
                         OrderItemDTO orderItemDTO
-                                = new OrderItemDTO(entity, imgEntity.getImgUrl() + imgEntity.getImgName());
+                                = new OrderItemDTO(entity, imgEntity.getImgName());
                         orderHistDTO.addOrderItemDTO(orderItemDTO);
+                        orderHistDTOList.add(orderHistDTO);
                     }
                 }
-
             }
 
         }
-
-        return new ResponesPageDTO(requestPageDTO, orderHistDTOList, (int) ordersPage.getTotalElements());
+        return new ResponesPageDTO<>(requestPageDTO, orderHistDTOList, (int) ordersPage.getTotalElements());
     }
 
 
