@@ -6,6 +6,7 @@ import com.example.shop.dto.RequestPageDTO;
 import com.example.shop.dto.ResponesPageDTO;
 import com.example.shop.exception.OutOfStockException;
 import com.example.shop.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class OrderController {
 
     @PostMapping("/order")
     public ResponseEntity order(@RequestBody @Valid OrderDTO orderDTO,
-                                BindingResult bindingResult, Principal principal){
+                                BindingResult bindingResult, Principal principal, HttpServletRequest request){
 
         log.info("주문하기 post 진입");
         log.info("들어온 값 체크 : " + orderDTO);
@@ -57,7 +58,8 @@ public class OrderController {
 
         if(principal == null) {
             log.info("로그인 안되어있음");
-            return new ResponseEntity<String>("", HttpStatus.UNAUTHORIZED);
+            log.info("이전페이지 주소" + request.getHeader("referer"));
+            return new ResponseEntity<String>(request.getHeader("referer"), HttpStatus.UNAUTHORIZED);
         }
         //주문을 하려면 부모인 주문entity 필요, 주문 entity는 회원과 1:1, 이메일로 주문 찾아오기
         String email = principal.getName();
@@ -100,5 +102,27 @@ public class OrderController {
 
         return "order/orderHist";
     }
+
+    @PostMapping("/order/{orderId}/cancle")
+    public ResponseEntity cancleOrder(
+            @PathVariable("orderId") Long orderId, Principal principal) {
+
+        if(!orderService.validateOrder(orderId, principal.getName())) {
+
+            return new ResponseEntity<String>("주문취소 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        log.info("받은 주문번호 : " + orderId);
+        log.info("받은 주문번호 : " + orderId);
+        log.info("받은 주문번호 : " + orderId);
+
+        orderService.cancleOrder(orderId);
+
+
+        return new ResponseEntity<Long>(orderId, HttpStatus.OK);
+    }
+
+
+
 
 }

@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter @ToString @NoArgsConstructor
+@Getter @Setter @ToString
 public class OrderHistDTO {
 
     private Long orderId;   //주문 아이디

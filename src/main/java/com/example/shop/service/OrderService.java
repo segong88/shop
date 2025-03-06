@@ -6,6 +6,7 @@ import com.example.shop.entity.*;
 import com.example.shop.exception.OutOfStockException;
 import com.example.shop.repository.ItemRepository;
 import com.example.shop.repository.MembersRepository;
+import com.example.shop.repository.OrderItemRepository;
 import com.example.shop.repository.OrdersRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ public class OrderService {
     private final OrdersRepository ordersRepository;
     private final MembersRepository membersRepository;
     private final ItemRepository itemRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public Long order(OrderDTO orderDTO, String email) {
 
@@ -77,6 +79,7 @@ public class OrderService {
         Page<Orders> ordersPage =
         ordersRepository.findOrders(email, requestPageDTO.getPageable("id"));
 
+        //주문 목록 list
         List<Orders> ordersList =
         ordersPage.getContent();
 
@@ -98,14 +101,63 @@ public class OrderService {
                         OrderItemDTO orderItemDTO
                                 = new OrderItemDTO(entity, imgEntity.getImgName());
                         orderHistDTO.addOrderItemDTO(orderItemDTO);
-                        orderHistDTOList.add(orderHistDTO);
+
                     }
                 }
             }
-
+            orderHistDTOList.add(orderHistDTO);
         }
-        return new ResponesPageDTO<>(requestPageDTO, orderHistDTOList, (int) ordersPage.getTotalElements());
+
+        return new ResponesPageDTO(requestPageDTO, orderHistDTOList, (int) ordersPage.getTotalElements());
     }
+
+    //주문취소
+    public void cancleOrder(Long orderId) {
+        //주문취소하려는 주문을 pk로 불러와서
+        Orders orders =
+                ordersRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+
+        //주문의 주문상태를 취소상태로 변경
+        if(orders.getOrderStatus() == OrderStatus.ORDER) {
+
+            orders.setOrderStatus(OrderStatus.CANCEL);
+
+        //주문의 주문아이템들의 수량만큼 재고를 더해준다.
+            List<OrderItem> orderItemList = orders.getOrderItems();
+
+            for(OrderItem orderItem : orderItemList) {
+                //orderItem.getCount();   //주문수량
+                //orderItem.getItem().getStockNumber();   //재고수량
+
+                orderItem.getItem().setStockNumber(
+                        orderItem.getItem().getStockNumber()
+                        + orderItem.getCount()
+                );
+            }
+        }
+    }
+
+    //자신이 주문한 내역인지 확인하는 메소드
+    public boolean validateOrder(Long orderId, String email) {
+        Members members =
+        membersRepository.findByEmail(email);   //select * from members
+
+        Orders orders =                                                //where email = :email
+        ordersRepository.findById(orderId)          //주문 목록을 찾아온다.
+        .orElseThrow(EntityNotFoundException::new); //select * from orders
+                                                    //where order_id = :orderId
+
+        Members saveMember =
+                orders.getMembers();
+
+        //현재 로그인사용자와 현재 주문의 참조하는 회원이 같지 않다면
+        if(!members.getEmail().equals(saveMember.getEmail())) {
+            return false;
+        }
+
+        return true;
+    }
+
 
 
 }

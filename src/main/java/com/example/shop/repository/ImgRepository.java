@@ -9,6 +9,6 @@ public interface ImgRepository extends JpaRepository<ImgEntity, Long> {
 
     public List<ImgEntity> findByItemId (Long item_id);
 
-    //select * from img where item_id= :item_id and repimg_yn =:y
+    //select * from img where item_id = :item_id and repimg_yn =:y
     public ImgEntity findByItemIdAndRepimgYn(Long item_id, String y);
 }

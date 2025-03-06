@@ -105,7 +105,7 @@ public class ItemController {
 
         redirectAttributes.addFlashAttribute("itemNm", itemDTO.getItemNm());
 
-        return "redirect:admin/item/list";
+        return "redirect:/admin/item/list";
     }
 
     @GetMapping("/list")

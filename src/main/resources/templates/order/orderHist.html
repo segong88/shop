@@ -22,10 +22,10 @@
                     <h4> [[${dto.orderDate + ' 주문'}]]
 
                     <th:block th:if="${dto.orderStatus.name() == 'ORDER'}">
-                            <button>주문취소</button>
+                        <button type="button" th:value="${dto.orderId}" class="btn btn-warning orderCancle">주문취소</button>
                     </th:block>
                     <th:block th:if="${dto.orderStatus.name() == 'CANCEL'}">
-                            <span>(취소완료)</span>
+                        <span>(취소완료)</span>
                     </th:block>
                     </h4>
                 </div>
@@ -62,7 +62,43 @@
 
         </th:block>
 
+        <script>
+            let orderCancle = $(".orderCancle")
+
+            orderCancle.on("click", function () {
+                //alert("홍길동")
+                //alert($(this).val())
+                //보낼주소 /order/pk번호/cancle
+                //보낼값 orderId $(this).val()
+
+                $.ajax({
+                    url : `/order/${ $(this).val() }/cancle`,
+                    type : "post",
+                    dataType : "json",
+                    success : function (data) {
+                        console.log(data)
+                        alert("주문이 취소되었습니다.")
+                        location.href = "/orders"
+                        //차후에 페이징처리후 봤던 주문페이지까지도 이동예정
+                    },
+                    error : function (jqXHR, status, error) {
+                        if(jqXHR.status == '401') {
+                            alert("로그인 후 이용해주세요")
+                            location.href = "/user/login" ; //401 로그인 안되어있을때 로그인페이지로 이동
+                        } else if(jqXHR.status == '403'){
+                            alert(jqXHR.responseText);    //에러에 대한 내용 출력
+                            location.href = "/user/login" ;
+                        }
+                    }
+                })
+
+
+            })
+        </script>
+
     </th:block>
+
+
 
 </body>
 </html>

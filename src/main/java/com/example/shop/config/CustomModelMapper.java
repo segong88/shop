@@ -11,8 +11,9 @@ public class CustomModelMapper extends ModelMapper {
 
         if(source == null) {
             return null;
-        } else {
-            return super.map(source, destinationType);
         }
+
+        return super.map(source, destinationType);
+
     }
 }
